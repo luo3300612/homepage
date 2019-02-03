@@ -6,6 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'  # what for ?
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASKY_ADMIN = os.environ.get("FLASKY_ADMIN")
 
     @staticmethod
@@ -19,7 +20,7 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    TEATING = True
+    TESTING = True
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:12345@localhost:3306/test'
 
 

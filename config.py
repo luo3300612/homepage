@@ -7,7 +7,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'  # what for ?
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FLASKY_ADMIN = os.environ.get("FLASKY_ADMIN")
+    FLASKY_ADMIN = os.environ.get("FLASKY_ADMIN") or "john@example.com"
 
     @staticmethod
     def init_app(app):

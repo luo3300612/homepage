@@ -1,6 +1,6 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for,flash
-from flask_login import login_required
+from flask import render_template, session, redirect, url_for, flash
+from flask_login import login_required, current_user
 
 from . import main
 from .forms import NameForm, EditProfileForm
@@ -29,18 +29,17 @@ def user(username):
     return render_template('user.html', user=user)
 
 
-@main.route('/user/<username>/edit', methods=['GET', 'POST'])
-def edit(username):
+@main.route('/user/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
     form = EditProfileForm()
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        abort(404)
     if form.validate_on_submit():
-        user.location = form.location.data
-        user.about_me = form.about_me.data
-        db.session.add(user)
+        current_user.location = form.location.data
+        current_user.about_me = form.about_me.data
+        db.session.add(current_user)
         db.session.commit()
-        flash('Succeed.')
-        return render_template('index.html', user=user,current_time=datetime.utcnow())
-
-    return render_template('edit.html', form=form,user=user)
+        flash('Your profile has been updated..')
+        return redirect(url_for('.user', username=current_user.username))
+    form.location.data = current_user.location
+    form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', form=form)

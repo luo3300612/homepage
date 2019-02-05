@@ -26,5 +26,18 @@ def test():
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
+@manager.command
+def rebuild():
+    """Rebuild the project"""
+    db.drop_all()
+    db.create_all()
+    user1 = User(username='luo3300612', password="3300612", email='591486669@qq.com', location="Nanjing",
+                 about_me="handsome", role_id=1)
+    user2 = User(username='luo', password="3300612", email='john@example.com', location="Beijing", about_me="handsome",
+                 role_id=3)
+    db.session.add_all([user1, user2])
+    Role.insert_roles()
+
+
 if __name__ == '__main__':
     manager.run()

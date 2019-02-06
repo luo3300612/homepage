@@ -8,3 +8,7 @@ mysql-connector
 flask-migrate
 flask-mail
 flask-login
+forgerypy
+flask-pagedown
+markdown
+bleach

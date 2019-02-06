@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 from app import create_app, db
-from app.models import User, Role
+from app.models import User, Role,Post
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -38,6 +38,8 @@ def rebuild():
                  role_id=3)
     db.session.add_all([user1, user2])
     db.session.commit()
+    User.generate_fake(100)
+    Post.generate_fake(100)
 
 
 if __name__ == '__main__':

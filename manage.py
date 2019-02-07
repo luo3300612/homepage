@@ -4,6 +4,7 @@ from app import create_app, db
 from app.models import User, Role,Post
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
+import random
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
@@ -40,6 +41,13 @@ def rebuild():
     db.session.commit()
     User.generate_fake(100)
     Post.generate_fake(100)
+    users = User.query.all()
+    for user in users:
+        if random.randint(0,1) == 1:
+            user.follow(user1)
+        else:
+            user.follow(user2)
+    db.session.commit()
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ class Config:
     FLASKY_FOLLOWERS_PER_PAGE = 5
     FLASKY_COMMENTS_PER_PAGE = 5
 
+
     @staticmethod
     def init_app(app):
         pass
@@ -24,11 +25,35 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:12345@localhost:3306/test'
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:12345@localhost:3306/homepage'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:12345@localhost:3306/dev'
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        import logging
+        from logging.handlers import SMTPHandler
+        credentials = ('591486669@qq.com', 'dgohakswpclnbdhi')
+        secure = None
+        if getattr(cls, 'MAIL_USERNAME', None) is not None:
+            credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
+            if getattr(cls, 'MAIL_USE_TLS', None):
+                secure = ()
+        mail_handler = SMTPHandler(
+            mailhost=('smtp.qq.com', 25),
+            fromaddr='591486669@qq.com',
+            toaddrs=['591486669@qq.com'],
+            subject='App Error',
+            credentials=credentials,
+            secure=secure
+        )
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
 
 
 config = {

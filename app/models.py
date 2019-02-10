@@ -32,7 +32,6 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     avatar_hash = db.Column(db.String(32))
-
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     followed = db.relationship('Follow',

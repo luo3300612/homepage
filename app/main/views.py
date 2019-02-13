@@ -5,7 +5,6 @@ from flask_login import login_required, current_user
 from . import main
 from .forms import NameForm, EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
 
-()
 from .. import db
 from ..models import User, Role, Permission, Post, Comment
 from flask import abort, request, current_app, make_response

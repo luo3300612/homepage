@@ -38,7 +38,7 @@ class ProductionConfig(Config):
 
         import logging
         from logging.handlers import SMTPHandler
-        credentials = ('591486669@qq.com', 'dgohakswpclnbdhi')
+        credentials = ('591486669@qq.com', os.environ.get("EMAIL_PASSWORD"))
         secure = None
         if getattr(cls, 'MAIL_USERNAME', None) is not None:
             credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)

@@ -33,4 +33,6 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
+    from .time_manager import time_manager as time_manager_blueprint
+    app.register_blueprint(time_manager_blueprint,url_prefix='/time_manager')
     return app

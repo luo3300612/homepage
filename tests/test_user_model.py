@@ -43,3 +43,16 @@ class UserModelTestCase(unittest.TestCase):
     def test_anonymous_user(self):
         u = AnonymousUser()
         self.assertFalse(u.can(Permission.FOLLOW))
+
+    def test_follow_and_unfollow(self):
+        user1 = User.generate_a_fake()
+        user2 = User.generate_a_fake()
+        db.session.add_all([user1, user2])
+        db.session.commit()
+        user1.follow(user2)
+        self.assertTrue(user1.is_following(user2))
+        self.assertTrue(user2.is_followed_by(user1))
+        user1.unfollow(user2)
+        db.session.commit()
+        self.assertFalse(user1.is_following(user2))
+        self.assertFalse(user2.is_followed_by(user1))

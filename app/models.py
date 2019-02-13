@@ -3,7 +3,7 @@ from . import db
 from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manager
 from flask import current_app
-from datetime import datetime
+from datetime import datetime, date
 import hashlib
 from flask import request
 from markdown import markdown
@@ -44,7 +44,9 @@ class User(UserMixin, db.Model):
                                 backref=db.backref('followed', lazy='joined'),
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    affairs = db.relationship('Affair', backref='user', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -97,22 +99,26 @@ class User(UserMixin, db.Model):
     def generate_fake(count=100):
         from sqlalchemy.exc import IntegrityError
         from random import seed
-        import forgery_py
 
         seed()
         for i in range(count):
-            u = User(email=forgery_py.internet.email_address(),
-                     username=forgery_py.internet.user_name(True),
-                     password=forgery_py.lorem_ipsum.word(),
-                     location=forgery_py.address.city(),
-                     about_me=forgery_py.lorem_ipsum.sentence(),
-                     member_since=forgery_py.date.date(True)
-                     )
+            u = User.generate_a_fake()
             db.session.add(u)
             try:
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
+
+    @staticmethod
+    def generate_a_fake():
+        import forgery_py
+        return User(email=forgery_py.internet.email_address(),
+                    username=forgery_py.internet.user_name(True),
+                    password=forgery_py.lorem_ipsum.word(),
+                    location=forgery_py.address.city(),
+                    about_me=forgery_py.lorem_ipsum.sentence(),
+                    member_since=forgery_py.date.date(True)
+                    )
 
     def follow(self, user):
         if not self.is_following(user):
@@ -132,8 +138,6 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
-
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
 
 class Role(db.Model):
@@ -248,3 +252,36 @@ class Comment(db.Model):
 
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
+
+
+class Affair(db.Model):
+    __tablename__ = 'affairs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, unique=True)  # 项目名
+
+    workload = db.Column(db.Integer, nullable=False)  # 总工作量
+    start_from = db.Column(db.Integer, default=0)  # 注册时工作量
+    process_status = db.Column(db.Integer, default=0)  # 当前进度
+
+    start_day = db.Column(db.Date, default=date.today())  # 开始日期
+    end_day = db.Column(db.Date)  # 完成日期
+
+    description = db.Column(db.String(100))  # 项目描述
+
+    is_completed = db.Column(db.Boolean, default=False)  # 是否完成
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    # 关系
+    records = db.relationship("Record", backref="affair", lazy='dynamic')
+
+
+class Record(db.Model):
+    __tablename__ = 'records'
+
+    id = db.Column(db.Integer, primary_key=True)
+    affair_id = db.Column(db.Integer, db.ForeignKey("affairs.id"))
+    workload = db.Column(db.Integer, nullable=False)  # 日工作量
+    date = db.Column(db.Date, default=date.today())  # 日期
+    thoughts = db.Column(db.String(100))  # 感想

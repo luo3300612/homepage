@@ -27,8 +27,8 @@
                     <li><a href="/">Home</a></li>
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profile</a></li>
-                    {% endif %}
-                    {% if current_user.is_authenticated %}
+
+                        <li><a href="{{ url_for('time_manager.show_affairs', username=current_user.username) }}">Affairs</a></li>
                         <li><a href="{{ url_for('time_manager.register_affair') }}">Register Affairs</a>
                         </li>
                     {% endif %}

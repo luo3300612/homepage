@@ -1,7 +1,7 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
-from ..models import User
+from ..models import User,Follow
 from .forms import LoginForm, RegistrationForm
 from .. import db
 
@@ -33,6 +33,8 @@ def register():
         user = User(email=form.email.data,
                     username=form.username.data,
                     password=form.password.data)
+        f = Follow(follower=user, followed=user)
+        db.session.add(f)
         db.session.add(user)
         flash('You can now login.')
         return redirect(url_for('auth.login'))

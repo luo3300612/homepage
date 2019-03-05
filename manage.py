@@ -65,6 +65,7 @@ def rebuild():
     Post.generate_fake(100)
     users = User.query.all()
     for user in users:
+        user.follow(user)
         if random.randint(0, 1) == 1:
             user.follow(user1)
         else:

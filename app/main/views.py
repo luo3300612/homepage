@@ -156,6 +156,7 @@ def followers(username):
         flash("Invalid user.")
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
+    print(user.followers.filter(username!=username))
     pagination = user.followers.paginate(
         page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
         error_out=False

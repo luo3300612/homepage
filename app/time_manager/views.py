@@ -42,4 +42,4 @@ def show_affairs(username):
     pagination = user.affairs.paginate(
         page, per_page=current_app.config['FLASKY_AFFAIRS_PER_PAGE'],
         error_out=False)
-    return render_template('affair.html', user=user, affairs=affairs)
+    return render_template('affair.html', user=user, affairs=affairs, pagination=pagination)
